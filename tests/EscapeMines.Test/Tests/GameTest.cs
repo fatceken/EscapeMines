@@ -19,7 +19,6 @@ namespace EscapeMines.Test
         [TestMethod]
         public void Run()
         {
-
             IGameConfiguration configuration = new GameConfiguration();
             IBoard board = configuration.BoardConfiguration.GetBoard();
             List<ICoordinate> mines = configuration.MinesConfiguration.GetMines();
