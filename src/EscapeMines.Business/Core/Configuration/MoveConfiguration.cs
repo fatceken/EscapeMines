@@ -29,11 +29,21 @@ namespace EscapeMines.Business.Core.Configuration
 
             foreach (string move in Configuration)
             {
+                if (String.IsNullOrEmpty(move))
+                {
+                    continue;
+                }
+
                 List<string> splittedMoves = move.Trim().Split(Constants.Space).ToList();
                 resultListItem = new List<MoveType>();
 
                 foreach (string splittedMove in splittedMoves)
                 {
+                    if (string.IsNullOrEmpty(splittedMove))
+                    {
+                        continue;
+                    }
+
                     MoveType moveType = Conversion.GetMoveType(splittedMove.Trim());
 
                     if (moveType == MoveType.Undefined)

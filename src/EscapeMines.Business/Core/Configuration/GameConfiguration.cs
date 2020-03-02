@@ -33,7 +33,9 @@ namespace EscapeMines.Business.Core.Configuration
             {
                 throw new FileNotFoundException("Game configuration file not found.");
             }
+
             List<string> configuration = File.ReadAllLines(ConfigReader.ConfigFilePath).ToList();
+            configuration.RemoveAll(t => string.IsNullOrEmpty(t));
 
             if (configuration.Count < 5)
             {
