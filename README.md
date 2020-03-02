@@ -1,7 +1,7 @@
 # EscapeMines
 
 PreRequisites :
-● .NETFramework,Version=v4.6.1 or higher
+● .NETFramework,Version=v4.6.1 or higher <br/>
 ● Game config file
 
 Escape Mines is a console application game
