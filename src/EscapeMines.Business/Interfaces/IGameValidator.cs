@@ -1,6 +1,4 @@
-﻿using EscapeMines.Business.Enums;
-using EscapeMines.Business.Models;
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -9,13 +7,13 @@ using System.Threading.Tasks;
 namespace EscapeMines.Business.Interfaces
 {
     /// <summary>
-    /// Represents the game
+    /// Represents a validatior for game
     /// </summary>
-    public interface IGame
+    public interface IGameValidator
     {
         /// <summary>
-        /// Runs the game
+        /// Validates game settings, if any validation fails throws exception
         /// </summary>
-        GameResult Run();
+        void Validate();
     }
 }

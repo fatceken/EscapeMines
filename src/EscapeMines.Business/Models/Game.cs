@@ -21,123 +21,67 @@ namespace EscapeMines.Business.Models
         private ICoordinate Exit;
         private IPosition StartPosition;
         private List<List<MoveType>> Moves;
+        private ITurtle Turtle;
 
-        public List<Status> ResultList { get; private set; }
-        public ITurtle Turtle { get; private set; }
-        public List<List<IPosition>> VisitedPositions { get; private set; }
-
-        public Game()
+        public Game(IBoard board, List<ICoordinate> mines, ICoordinate exit, IPosition start, List<List<MoveType>> moves, ITurtle turtle, IGameValidator validator)
         {
-            Configure();
-            Validate();
-            CreateElements();
+            //Validate game settings
+            validator.Validate();
+
+            Board = board;
+            Mines = mines;
+            Exit = exit;
+            StartPosition = start;
+            Moves = moves;
+            Turtle = turtle;
         }
 
-        public void Run()
+        public GameResult Run()
         {
+            GameResult GameResult = new GameResult(Moves.Count);
             MoveFactory factory = new MoveFactory();
 
             int counter = 0;
             foreach (var moveRow in Moves)
             {
-                ResultList.Add(Status.StillInDanger);
+                GameResult.ResultList.Add(Status.StillInDanger);
 
                 foreach (MoveType moveType in moveRow)
                 {
-                    VisitedPositions.Add(new List<IPosition>(moveRow.Count));
+                    GameResult.VisitedPositions.Add(new List<IPosition>(moveRow.Count));
 
                     IMove move = factory.GetMove(moveType);
                     IPosition tempPosition = move.Move(Turtle.CurrentPosition);
 
                     if (Board.IsInBoard(tempPosition.Coordinate)) // target position must be in board
                     {
-                        VisitedPositions[counter].Add(tempPosition);
+                        GameResult.VisitedPositions[counter].Add(tempPosition);
                         Turtle.CurrentPosition = tempPosition;
 
                         if (CheckMine(Turtle.CurrentPosition.Coordinate))
                         {
-                            ResultList[counter] = Status.MineHit;
+                            GameResult.ResultList[counter] = Status.MineHit;
                             break;
                         }
 
                         if (CheckExit(Turtle.CurrentPosition.Coordinate))
                         {
-                            ResultList[counter] = Status.Success;
+                            GameResult.ResultList[counter] = Status.Success;
                             break;
                         }
                     }
                     else
                     {
-                        ResultList[counter] = Status.OutOfBoard;
-                        VisitedPositions[counter].Add(tempPosition);
+                        GameResult.ResultList[counter] = Status.OutOfBoard;
+                        GameResult.VisitedPositions[counter].Add(tempPosition);
                         break;
                     }
                 }
                 counter++;
                 Turtle.CurrentPosition = StartPosition;
             }
-        }
 
-        /// <summary>
-        /// Configures game elements
-        /// </summary>
-        private void Configure()
-        {
-            IGameConfiguration configuration = new GameConfiguration();
-            Board = configuration.BoardConfiguration.GetBoard();
-            Mines = configuration.MinesConfiguration.GetMines();
-            Exit = configuration.ExitConfiguration.GetExitPoint();
-            StartPosition = configuration.StartConfiguration.GetStartPoint();
-            Moves = configuration.MoveConfiguration.GetMoves();
-        }
-
-        /// <summary>
-        /// Validates initial rules of the game, if any validation fails throws exception
-        /// </summary>
-        private void Validate()
-        {
-            foreach (ICoordinate mine in Mines)
-            {
-                if (StartPosition.Coordinate.X == mine.X && StartPosition.Coordinate.Y == mine.Y)
-                {
-                    throw new FormatException("Start Position can not be on mine");
-                }
-
-                if (!Board.IsInBoard(mine))
-                {
-                    throw new FormatException("Mines must be in board");
-                }
-
-                if (Exit.X == mine.X && Exit.Y == mine.Y)
-                {
-                    throw new FormatException("Exit Position can not be on mine");
-                }
-            }
-
-            if (!Board.IsInBoard(StartPosition.Coordinate))
-            {
-                throw new FormatException("Start Position must be in board");
-            }
-
-            if (!Board.IsInBoard(Exit))
-            {
-                throw new FormatException("Exit Position must be in board");
-            }
-
-            if (Exit.X == StartPosition.Coordinate.X && Exit.Y == StartPosition.Coordinate.Y)
-            {
-                throw new FormatException("Start and Exit Positions must be different");
-            }
-        }
-
-        /// <summary>
-        /// Creates the game elements
-        /// </summary>
-        private void CreateElements()
-        {
-            Turtle = new Turtle(StartPosition);
-            ResultList = new List<Status>(Moves.Count);
-            VisitedPositions = new List<List<IPosition>>(Moves.Count);
+            return GameResult;
         }
 
         /// <summary>
@@ -151,7 +95,7 @@ namespace EscapeMines.Business.Models
         }
 
         /// <summary>
-        /// Checks a corrdinate has mine 
+        /// Checks a coordinate has mine 
         /// </summary>
         /// <param name="coordinate">coordinate to be checked</param>
         /// <returns>True if the input point is on mine,otherwise false </returns>

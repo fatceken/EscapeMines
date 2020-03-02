@@ -68,12 +68,15 @@
     <Compile Include="Interfaces\IBoard.cs" />
     <Compile Include="Interfaces\ICoordinate.cs" />
     <Compile Include="Interfaces\IGame.cs" />
+    <Compile Include="Interfaces\IGameValidator.cs" />
     <Compile Include="Interfaces\IPosition.cs" />
     <Compile Include="Interfaces\ITurtle.cs" />
     <Compile Include="Models\Board.cs" />
     <Compile Include="Models\Coordinate.cs" />
     <Compile Include="Core\Configuration\GameConfiguration.cs" />
     <Compile Include="Models\Game.cs" />
+    <Compile Include="Models\GameResult.cs" />
+    <Compile Include="Models\GameValidator.cs" />
     <Compile Include="Models\Position.cs" />
     <Compile Include="Models\Turtle.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
