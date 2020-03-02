@@ -31,10 +31,5 @@ namespace EscapeMines.Business.Interfaces
         /// Gets the visited points of the turtle
         /// </summary>
         List<List<IPosition>> VisitedPositions { get; }
-
-        /// <summary>
-        /// Gets the game finish info
-        /// </summary>
-        string FinishInfo { get; }
     }
 }

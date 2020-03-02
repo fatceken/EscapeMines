@@ -25,13 +25,57 @@ namespace EscapeMines.Business.Models
         public List<Status> ResultList { get; private set; }
         public ITurtle Turtle { get; private set; }
         public List<List<IPosition>> VisitedPositions { get; private set; }
-        public string FinishInfo { get; private set; }
 
         public Game()
         {
             Configure();
             Validate();
             CreateElements();
+        }
+
+        public void Run()
+        {
+            MoveFactory factory = new MoveFactory();
+
+            int counter = 0;
+            foreach (var moveRow in Moves)
+            {
+                ResultList.Add(Status.StillInDanger);
+
+                foreach (MoveType moveType in moveRow)
+                {
+                    VisitedPositions.Add(new List<IPosition>(moveRow.Count));
+
+                    IMove move = factory.GetMove(moveType);
+                    IPosition tempPosition = move.Move(Turtle.CurrentPosition);
+
+                    if (Board.IsInBoard(tempPosition.Coordinate)) // target position must be in board
+                    {
+                        VisitedPositions[counter].Add(tempPosition);
+                        Turtle.CurrentPosition = tempPosition;
+
+                        if (CheckMine(Turtle.CurrentPosition.Coordinate))
+                        {
+                            ResultList[counter] = Status.MineHit;
+                            break;
+                        }
+
+                        if (CheckExit(Turtle.CurrentPosition.Coordinate))
+                        {
+                            ResultList[counter] = Status.Success;
+                            break;
+                        }
+                    }
+                    else
+                    {
+                        ResultList[counter] = Status.OutOfBoard;
+                        VisitedPositions[counter].Add(tempPosition);
+                        break;
+                    }
+                }
+                counter++;
+                Turtle.CurrentPosition = StartPosition;
+            }
         }
 
         /// <summary>
@@ -97,56 +141,6 @@ namespace EscapeMines.Business.Models
         }
 
         /// <summary>
-        /// Runs the game algorithm
-        /// </summary>
-        public void Run()
-        {
-            MoveFactory factory = new MoveFactory();
-
-            int counter = 0;
-            foreach (var moveRow in Moves)
-            {
-                ResultList.Add(Status.StillInDanger);
-
-                foreach (MoveType moveType in moveRow)
-                {
-                    VisitedPositions.Add(new List<IPosition>(moveRow.Count));
-
-                    IMove move = factory.GetMove(moveType);
-                    IPosition tempPosition = move.Move(Turtle.CurrentPosition);
-
-                    if (Board.IsInBoard(tempPosition.Coordinate)) // target position must be in board
-                    {
-                        VisitedPositions[counter].Add(tempPosition);
-                        Turtle.CurrentPosition = tempPosition;
-
-                        if (CheckMine(Turtle.CurrentPosition.Coordinate))
-                        {
-                            ResultList[counter] = Status.MineHit;
-                            break;
-                        }
-
-                        if (CheckExit(Turtle.CurrentPosition.Coordinate))
-                        {
-                            ResultList[counter] = Status.Success;
-                            break;
-                        }
-                    }
-                    else
-                    {
-                        ResultList[counter] = Status.OutOfBoard;
-                        VisitedPositions[counter].Add(tempPosition);
-                        break;
-                    }
-                }
-                counter++;
-                Turtle.CurrentPosition = StartPosition;
-            }
-
-            PrepareFinishInfo();
-        }
-
-        /// <summary>
         /// Checks a coordinate is the exit point
         /// </summary>
         /// <param name="coordinate">coordinate to be checked</param>
@@ -164,40 +158,6 @@ namespace EscapeMines.Business.Models
         private bool CheckMine(ICoordinate coordinate)
         {
             return Mines.Any(t => t.X == coordinate.X && t.Y == coordinate.Y);
-        }
-
-        /// <summary>
-        /// Creates an information text about played game
-        /// </summary>
-        private void PrepareFinishInfo()
-        {
-            //foreach (var item in VisitedPositions)
-            //{
-            //    item.Insert(0, StartPosition);
-            //}
-
-            StringBuilder stringBuilder = new StringBuilder();
-
-            for (int i = 0; i < ResultList.Count; i++)
-            {
-                stringBuilder.AppendLine(string.Format("Sequence {0} = {1} ", i, ResultList[i].ToString()));
-                stringBuilder.Append("Visited Positions : ");
-                VisitedPositions[i].ForEach(item =>
-                {
-                    stringBuilder.Append(string.Format("[ {0} {1} {2} ]  ", item.Coordinate.X, item.Coordinate.Y, item.Direction.ToString()));
-                });
-
-                stringBuilder.Append("\n");
-
-                //stringBuilder.Append("Moves : ");
-                //Moves[i].ForEach(item =>
-                //{
-                //    stringBuilder.Append(string.Format("{0} ", item.ToString()));
-                //});
-
-                stringBuilder.AppendLine("\n");
-            }
-            this.FinishInfo = stringBuilder.ToString();
         }
     }
 }

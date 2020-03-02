@@ -25,7 +25,7 @@ namespace EscapeMines
             {
                 IGame game = new Game();
                 game.Run();
-                Console.WriteLine(game.FinishInfo);
+                Console.WriteLine(GetFinishInfo(game));
             }
             catch (Exception ex)
             {
@@ -34,6 +34,26 @@ namespace EscapeMines
             }
 
             Console.ReadLine();
+        }
+
+        private static string GetFinishInfo(IGame game)
+        {
+            StringBuilder stringBuilder = new StringBuilder();
+
+            for (int i = 0; i < game.ResultList.Count; i++)
+            {
+                stringBuilder.AppendLine(string.Format("Sequence {0} = {1} ", i, game.ResultList[i].ToString()));
+
+                stringBuilder.Append("Visited Positions : ");
+                game.VisitedPositions[i].ForEach(item =>
+                {
+                    stringBuilder.Append(string.Format("[ {0} {1} {2} ]  ", item.Coordinate.X, item.Coordinate.Y, item.Direction.ToString()));
+                });
+
+                stringBuilder.AppendLine("\n");
+            }
+
+            return stringBuilder.ToString();
         }
     }
 }
