@@ -6,7 +6,7 @@ PreRequisites :<br/>
 <br/>
 Escape Mines is a console application game<br/>
 <br/>
-A turtle must walk through a minefield. Program reads the initial game settings (path must be defined in app.config) and one or more sequences of moves. For each move sequence, the program outputs whether the sequence leads to the success or failure of the turtle.
+A turtle must walk through a minefield. Program reads the initial game settings (path must be defined in app.config) and one or more sequences of moves. For each move sequence, the program outputs whether the sequence leads to the success or failure of the turtle.<br/>
 <br/>
 ● The board (or minefield) is a grid of N by M number of tiles.<br/>
 ● The starting position is a tile, represented by a set of zero based coordinates (x, y) and the initial<br/>
