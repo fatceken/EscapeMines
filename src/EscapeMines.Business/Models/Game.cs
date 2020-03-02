@@ -38,42 +38,41 @@ namespace EscapeMines.Business.Models
 
         public GameResult Run()
         {
-            GameResult GameResult = new GameResult(Moves.Count);
+            GameResult gameResult = new GameResult(Moves.Count);
             MoveFactory factory = new MoveFactory();
 
             int counter = 0;
             foreach (var moveRow in Moves)
             {
-                GameResult.ResultList.Add(Status.StillInDanger);
+                gameResult.ResultList.Add(Status.StillInDanger);
 
                 foreach (MoveType moveType in moveRow)
                 {
-                    GameResult.VisitedPositions.Add(new List<IPosition>(moveRow.Count));
-
                     IMove move = factory.GetMove(moveType);
                     IPosition tempPosition = move.Move(Turtle.CurrentPosition);
+                    gameResult.VisitedPositions.Add(new List<IPosition>(moveRow.Count));
 
                     if (Board.IsInBoard(tempPosition.Coordinate)) // target position must be in board
                     {
-                        GameResult.VisitedPositions[counter].Add(tempPosition);
+                        gameResult.VisitedPositions[counter].Add(tempPosition);
                         Turtle.CurrentPosition = tempPosition;
 
                         if (CheckMine(Turtle.CurrentPosition.Coordinate))
                         {
-                            GameResult.ResultList[counter] = Status.MineHit;
+                            gameResult.ResultList[counter] = Status.MineHit;
                             break;
                         }
 
                         if (CheckExit(Turtle.CurrentPosition.Coordinate))
                         {
-                            GameResult.ResultList[counter] = Status.Success;
+                            gameResult.ResultList[counter] = Status.Success;
                             break;
                         }
                     }
                     else
                     {
-                        GameResult.ResultList[counter] = Status.OutOfBoard;
-                        GameResult.VisitedPositions[counter].Add(tempPosition);
+                        gameResult.ResultList[counter] = Status.OutOfBoard;
+                        gameResult.VisitedPositions[counter].Add(tempPosition);
                         break;
                     }
                 }
@@ -81,7 +80,7 @@ namespace EscapeMines.Business.Models
                 Turtle.CurrentPosition = StartPosition;
             }
 
-            return GameResult;
+            return gameResult;
         }
 
         /// <summary>
