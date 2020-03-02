@@ -31,6 +31,7 @@ namespace EscapeMines.Business.Models
         {
             Configure();
             Validate();
+            CreateElements();
         }
 
         /// <summary>
@@ -86,14 +87,20 @@ namespace EscapeMines.Business.Models
         }
 
         /// <summary>
-        /// Runs the game algorithm
+        /// Creates the game elements
         /// </summary>
-        public void Run()
+        private void CreateElements()
         {
             Turtle = new Turtle(StartPosition);
             ResultList = new List<Status>(Moves.Count);
             VisitedPositions = new List<List<IPosition>>(Moves.Count);
+        }
 
+        /// <summary>
+        /// Runs the game algorithm
+        /// </summary>
+        public void Run()
+        {
             MoveFactory factory = new MoveFactory();
 
             int counter = 0;
